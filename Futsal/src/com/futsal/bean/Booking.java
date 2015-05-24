@@ -10,7 +10,7 @@ public class Booking implements Serializable {
 	private String bookName;
 	private Date bookStart;
 	private Date bookEnd;
-	private String bookCourt;
+	private int bookCourtId;
 	
 	public Booking() {}
 	
@@ -46,12 +46,12 @@ public class Booking implements Serializable {
 		this.bookEnd = bookEnd;
 	}
 
-	public String getBookCourt() {
-		return bookCourt;	
+	public int getBookCourtId() {
+		return bookCourtId;	
 	}
 	
-	public void setBookCourt(String court) {
-		this.bookCourt = court;
+	public void setBookCourtId(int court) {
+		this.bookCourtId = court;
 		
 	}
 	

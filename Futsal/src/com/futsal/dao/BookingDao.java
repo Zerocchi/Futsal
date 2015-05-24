@@ -13,12 +13,13 @@ import java.util.Date;
 import com.futsal.bean.Booking;
 import com.futsal.bean.Court;
 import com.futsal.connection.ConnectionProvider;
+import com.futsal.helper.CheckInterval;
 
 public class BookingDao {
 	
 	private static int STATUS=0;
 	private Connection con;
-	SimpleDateFormat sdf = new SimpleDateFormat("dd/mm/yyyy HH:mm");
+	SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
 	// Get all the bookings plus court from the database
 	public List<Booking> getAllBooking() {
@@ -39,7 +40,7 @@ public class BookingDao {
 				booking.setBookName(rs.getString("booking_name"));
 				booking.setBookStart(sdf.parse(rs.getString("booking_start")));
 				booking.setBookEnd(sdf.parse(rs.getString("booking_end")));
-				booking.setBookCourt(rs.getString("court"));
+				booking.setBookCourtId(rs.getInt("court"));
 				books.add(booking);
 			}
 			
@@ -69,7 +70,7 @@ public class BookingDao {
 				booking.setBookName(rs.getString("booking_name"));
 				booking.setBookStart(sdf.parse(rs.getString("booking_start")));
 				booking.setBookEnd(sdf.parse(rs.getString("booking_end")));
-				booking.setBookCourt(rs.getString("court"));
+				booking.setBookCourtId(rs.getInt("court"));
 			}
 			
 		} catch(Exception e) {
@@ -78,7 +79,7 @@ public class BookingDao {
 		return booking;
 	}
 
-	public void newBooking(Booking b, Court c) {
+	public void newBooking(Booking b) {
 		
 		try {
 			if(con == null)
@@ -105,7 +106,7 @@ public class BookingDao {
 			PreparedStatement ps1=con.prepareStatement("insert into courtbooking (courtbooking_id, booking_id, court_id) "
 					+ "values (courtbook_seq.nextval, ?, ?)");  
 			ps1.setInt(1, lastSeqValue);
-			ps1.setInt(2, c.getCourtId());
+			ps1.setInt(2, b.getBookCourtId());
 			              
 			ps1.executeUpdate();
 			
@@ -116,9 +117,32 @@ public class BookingDao {
 	}
 
 
-	public void updateBooking(Booking booking) {
-		// TODO Update both booking and checkbooking
+	public void updateBooking(Booking b) {
+		// TODO Update both booking and courtbooking
 		
+		try {  
+			if(con == null)
+				con = ConnectionProvider.getCon();
+			
+			// Update booking table
+			PreparedStatement ps=con.prepareStatement("update booking set booking_name=?, booking_start=?, booking_end=? where booking_id = ?");
+			ps.setString(1,b.getBookName());
+			ps.setTimestamp(2, new java.sql.Timestamp(b.getBookStart().getTime()));
+			ps.setTimestamp(3, new java.sql.Timestamp(b.getBookEnd().getTime()));
+			ps.setInt(4, b.getBookId());
+
+			ps.executeUpdate();  
+			
+			// Update courtbooking
+			PreparedStatement ps2=con.prepareStatement("update courtbooking set court_id=? where booking_id=?");
+			ps2.setInt(1, b.getBookCourtId());
+			ps2.setInt(2, b.getBookId());
+			
+			ps2.executeUpdate();
+			
+		}catch(Exception e){
+				e.printStackTrace();
+		}  
 		
 		
 	}
@@ -126,10 +150,87 @@ public class BookingDao {
 	public void deleteBookingById(int bookingid) {
 		
 		// TODO:
-		// check if checkbooking using the booking key (avoids integrity-constraint violation)
+		// check if courtbooking using the booking key (avoids integrity-constraint violation)
 		// if any, delete that first before deleting booking
+		
+		if(con == null)
+			con = ConnectionProvider.getCon();
+		Booking booking = new Booking();
+		try {
+			PreparedStatement ps = con.prepareStatement("select * from courtbooking where booking_id = ?");
+			ps.setInt(1, bookingid);
+
+			ResultSet rs = ps.executeQuery();
+			
+			if(rs.next()){
+				PreparedStatement ps1=con.prepareStatement("delete from courtbooking where booking_id = ?");
+				ps1.setInt(1, bookingid);
+				              
+				ps1.executeUpdate(); 
+			}
+			
+			PreparedStatement ps2=con.prepareStatement("delete from booking where booking_id = ?");
+			ps2.setInt(1, bookingid);
+			              
+			ps2.executeUpdate(); 
+			
+		} catch(Exception e){
+			e.printStackTrace();
+		}
+		
+	}
+
+	public List<Court> getCourtList() {
+		
+		if(con == null)
+			con = ConnectionProvider.getCon();
+		List<Court> courts = new ArrayList<>();
+		try {
+			Statement statement = con.createStatement();
+			ResultSet rs = statement.executeQuery("select distinct * from court");
+			
+			while(rs.next()){
+				Court court = new Court();
+				court.setCourtId(rs.getInt("court_id"));
+				court.setCourtNum(rs.getInt("court_num"));
+				courts.add(court);
+			}
+			
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return courts;
 		
 	}
 	
+	public boolean checkCourtAvailability(Date dateCheck, int courtId){
+		
+		// return boolean value if the selected court is available
+		
+		boolean isAvailable = true;
+		
+		if(con == null)
+			con = ConnectionProvider.getCon();
+		try {
+			PreparedStatement ps = con.prepareStatement("select to_char(b.booking_start, 'DD/MM/YYYY HH24:MI') as"
+					+ " booking_start, to_char(b.booking_end, 'DD/MM/YYYY HH24:MI') as booking_end, "
+					+ "co.court_num as court from booking b, courtbooking cb, court co where b.booking_id = cb.booking_id "
+					+ "and cb.court_id = co.court_id and co.court_id = ?");
+			ps.setInt(1, courtId);
+			
+			ResultSet rs = ps.executeQuery();
+			
+			while(rs.next() && isAvailable){
+				Date start = sdf.parse(rs.getString("booking_start"));
+				Date end = sdf.parse(rs.getString("booking_end"));
+				if(CheckInterval.check(start, end, dateCheck)){
+					isAvailable = false;
+				}
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return isAvailable;
+	}
 
 }

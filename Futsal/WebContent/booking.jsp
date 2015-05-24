@@ -18,12 +18,15 @@
 
 <div class="container">
 <div class="jumbotron"></div>
-
+<div class="row">
+<div class="col-md-3 first"></div>
+<div class="col-md-6 second">
 <form action="Booking" method="post">
+	<input type="hidden" name="bookid" value="${bookinfo.bookId}">
 	<table border="1" align="center" class="table table-bordered table-hover">
 	<tr><td colspan=2 align="center"><h1>Booking</h1></td></tr>
 	<tr><td>Booking Name:</td><td><input type="text" name="name" value="${bookinfo.bookName}"></td></tr>
-	<tr><td>Booking Time:<br /><a href="Booking?action=check" onclick="window.open('Booking?action=check', 'newwindow', 'width=350, height=470'); return false;">Check Availability</a></td>
+	<tr><td>Booking Time:<br /><a href="Booking?action=check" onclick="window.open('Booking?action=check', 'newwindow', 'width=350, height=600'); return false;">Check Availability</a></td>
 	<td align="center">
 	
 	<%-- start time --%>
@@ -44,12 +47,10 @@
 	<script type="text/javascript">
 	    $(function () {
 	        $('#datetimepickerstart').datetimepicker({
-            	sideBySide: true,
             	showTodayButton: true,
             	format: "DD/MM/YYYY HH:mm"
             });
 	        $('#datetimepickerend').datetimepicker({
-            	sideBySide: true,
             	showTodayButton: true,
             	format: "DD/MM/YYYY HH:mm"
             });
@@ -61,11 +62,22 @@
 	        });
 	    });
 	</script>
-
-	<tr><td>Court:</td><td><input type="text" name="court" value="${bookinfo.bookCourt}"></td></tr>    
+	</td></tr>
+	<tr><td>Court</td>
+	<td>
+	<select name="court" class="form-control">
+	<c:forEach var="court" items="${courtlist}">
+		<option value="${court.courtId}" ${court.courtId == bookinfo.bookCourtId ? 'selected="selected"' : ''}>${court.courtNum}</option>
+	</c:forEach> 
+	</select>
+	</td>
+	</tr>
 	<tr><td colspan="2" align="center"><input type="submit" value="Submit" class="btn btn-primary"></td></tr>
 	</table>
 </form>
+</div>
+<div class="col-md-3 third"></div>
+</div>
 </div>
 </body>
 </html>

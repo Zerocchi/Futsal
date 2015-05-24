@@ -26,7 +26,7 @@
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
                 <li><a href="admin.jsp">Home</a>
-                <li><a href="Booking?action=check">Check Availability</a></li>
+                <!-- <li><a href="Booking?action=check">Check Availability</a></li> -->
 
             </ul>
             <ul class="nav navbar-nav navbar-right">

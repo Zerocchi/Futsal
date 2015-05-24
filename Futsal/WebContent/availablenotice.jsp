@@ -9,6 +9,7 @@
 <title>Availability</title>
 </head>
 <body>
-${datetime}
+Court ${court} during <fmt:formatDate value="${datetime}" pattern="dd/MM/yyyy HH:mm" /> is <c:out value="${status? 'available' :'not available'}"/>
+<br /><a href="admin.jsp">Back</a>
 </body>
 </html>
