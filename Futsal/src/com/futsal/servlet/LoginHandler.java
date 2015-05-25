@@ -16,7 +16,7 @@ import com.futsal.dao.SessionDao;
  * Servlet implementation class LoginServlet
  */
 @WebServlet("/Login")
-public class LoginServlet extends HttpServlet {
+public class LoginHandler extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException { 

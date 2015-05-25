@@ -6,17 +6,65 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Login</title>
+<link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<title>Log In</title>
 </head>
 <body>
-<p align="center"><jsp:include page="menubar.jsp" /></p>
-<form action="Login" method="post">
-	<table border="1" align="center">
-	<tr><td colspan=2 align="center"><h1>Log In</h1></td></tr>
-	<tr><td>Username:</td><td><input type="text" name="username"></td></tr>
-	<tr><td>Password:</td><td><input type="password" name="password"></td></tr>
-	<tr><td colspan="2" align="center"><input type="submit" value="Submit"></td></tr>
-	</table>
-</form>
+<c:choose>  
+<c:when test="${sessionScope.user eq 'admin'}"> <%-- check if user session is equal to admin --%>
+<c:redirect url="/admin.jsp" />
+</c:when>  
+<c:otherwise>
+      <div class="container" style="margin-top:40px">
+		<div class="row">
+			<div class="col-sm-6 col-md-4 col-md-offset-4">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<strong> Admin Panel</strong>
+					</div>
+					<div class="panel-body">
+						<form role="form" action="Login" method="POST">
+							<fieldset>
+								<div class="row">
+									<div class="center-block">
+										<p align="center"><img class="profile-img"
+											src="" alt=""></p>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-12 col-md-10  col-md-offset-1 ">
+										<div class="form-group">
+											<div class="input-group">
+												<span class="input-group-addon">
+													<i class="glyphicon glyphicon-user"></i>
+												</span> 
+												<input class="form-control" placeholder="Username" name="username" type="text" autofocus>
+											</div>
+										</div>
+										<div class="form-group">
+											<div class="input-group">
+												<span class="input-group-addon">
+													<i class="glyphicon glyphicon-lock"></i>
+												</span>
+												<input class="form-control" placeholder="Password" name="password" type="password" value="">
+											</div>
+										</div>
+										<div class="form-group">
+											<input type="submit" class="btn btn-lg btn-primary btn-block" value="Sign in">
+										</div>
+									</div>
+								</div>
+							</fieldset>
+						</form>
+					</div>
+					<div class="panel-footer ">
+						© Futsal System 2015
+					</div>
+                </div>
+			</div>
+		</div>
+	</div>
+</c:otherwise>
+</c:choose>
 </body>
 </html>

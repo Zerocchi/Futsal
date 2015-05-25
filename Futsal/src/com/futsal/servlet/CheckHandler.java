@@ -20,16 +20,17 @@ import com.futsal.helper.CheckInterval;
  * Servlet implementation class CheckServlet
  */
 @WebServlet("/Check")
-public class CheckServlet extends HttpServlet {
+public class CheckHandler extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static String RESULT = "availablenotice.jsp";
+	private static String LIST = "listBooking.jsp";
 	private BookingDao bookingDAO;
 	private SimpleDateFormat formatter;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public CheckServlet() {
+    public CheckHandler() {
         super();
         bookingDAO = new BookingDao();
     }
@@ -61,7 +62,7 @@ public class CheckServlet extends HttpServlet {
 			e.printStackTrace();
 		}
 		
-		RequestDispatcher view = request.getRequestDispatcher(RESULT);
+		RequestDispatcher view = request.getRequestDispatcher(LIST);
         view.forward(request, response);
 	}
 

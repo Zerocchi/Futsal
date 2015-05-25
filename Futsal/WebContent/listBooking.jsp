@@ -18,6 +18,15 @@
 <jsp:include page="menubar.jsp" />
 <div class="container">
 <div class="jumbotron"></div>
+
+<%-- Court availability --%>
+<c:if test="${not empty court}">
+<div class="alert alert-warning">
+	<a href="#" class="close" data-dismiss="alert">&times;</a>
+		Court ${court} during <fmt:formatDate value="${datetime}" pattern="dd/MM/yyyy HH:mm" /> is <c:out value="${status? 'available' :'not available'}"/>
+</div>
+</c:if>
+
 <div class="row">
 <div class="col-md-9 first">
 <table border="1" align="center" class="table table-bordered table-hover" width=50%>
@@ -49,7 +58,8 @@
 </table>
 </div>
 <div class="col-md-3 second">
-	<form action="Check" method="post">
+	<form action="Booking" method="get">
+	<input type="hidden" name="action" value="check">
 	<table border="1" align="center" class="table table-bordered table-hover">
 	<tr><td align="center"><h1>Check Availability</h1></td></tr>
 	<tr><td align="center">

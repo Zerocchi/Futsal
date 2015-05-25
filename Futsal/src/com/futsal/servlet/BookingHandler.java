@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -19,7 +20,7 @@ import com.futsal.bean.Booking;
  * Servlet implementation class BookingServlet
  */
 @WebServlet("/Booking")
-public class BookingServlet extends HttpServlet {
+public class BookingHandler extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private BookingDao bookingDAO;
 	private SimpleDateFormat formatter;
@@ -27,7 +28,7 @@ public class BookingServlet extends HttpServlet {
     private static String LIST = "/listBooking.jsp";
     private static String AVAILABILITY = "/checkavailability.jsp";
 	
-    public BookingServlet() {
+    public BookingHandler() {
         super();
         bookingDAO = new BookingDao();
         formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm");
@@ -52,9 +53,6 @@ public class BookingServlet extends HttpServlet {
 			request.setAttribute("bookinglist", bookingDAO.getAllBooking());
 			request.setAttribute("courtlist", bookingDAO.getCourtList());
 			request.setAttribute("currentdate", formatter.format(new Date()));
-		} else if(action.equalsIgnoreCase("check")) { // check availability
-			forward = AVAILABILITY;
-			request.setAttribute("courtlist", bookingDAO.getCourtList());
 		} else if(action.equalsIgnoreCase("add")) { // add booking
 			forward = INSERT_OR_EDIT;
 			request.setAttribute("courtlist", bookingDAO.getCourtList());
@@ -68,6 +66,27 @@ public class BookingServlet extends HttpServlet {
 			int bookingid = Integer.parseInt(request.getParameter("bookingid"));
 			request.setAttribute("courtlist", bookingDAO.getCourtList());
 			request.setAttribute("bookinfo", bookingDAO.getBookingById(bookingid));
+		} else if(action.equalsIgnoreCase("check")){
+			forward = LIST;
+			request.setAttribute("courtlist", bookingDAO.getCourtList());
+			request.setAttribute("bookinglist", bookingDAO.getAllBooking());
+			request.setAttribute("currentdate", formatter.format(new Date()));
+			
+			// get court availability
+			formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+			Date datetime = null;
+			int court = 0;
+			
+			try {
+				datetime = formatter.parse(request.getParameter("datetime"));
+				court = Integer.parseInt(request.getParameter("court"));
+				boolean isAvailable = bookingDAO.checkCourtAvailability(datetime, court);
+				request.setAttribute("status", isAvailable);
+				request.setAttribute("datetime", datetime);
+				request.setAttribute("court", court);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
 		}
 			
 		// forward all attributes to desired page.

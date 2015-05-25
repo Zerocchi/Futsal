@@ -11,13 +11,13 @@ import javax.servlet.http.HttpServletResponse;
  * Servlet implementation class EventServlet
  */
 @WebServlet("/Event")
-public class EventServlet extends HttpServlet {
+public class EventHandler extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public EventServlet() {
+    public EventHandler() {
         super();
         // TODO Auto-generated constructor stub
     }
