@@ -9,7 +9,7 @@
 <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
 <title>Log In</title>
 </head>
-<body>
+<body style="background-image: url(bootstrap/futsal.jpg); background-size: cover">
 <c:choose>  
 <c:when test="${sessionScope.user eq 'admin'}"> <%-- check if user session is equal to admin --%>
 <c:redirect url="/admin.jsp" />
