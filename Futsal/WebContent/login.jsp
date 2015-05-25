@@ -7,6 +7,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<link href="bootstrap/css/custom.css" rel="stylesheet">
 <title>Log In</title>
 </head>
 <body style="background-image: url(bootstrap/futsal.jpg); background-size: cover">
@@ -15,10 +16,11 @@
 <c:redirect url="/admin.jsp" />
 </c:when>  
 <c:otherwise>
-      <div class="container" style="margin-top:40px">
+      <div class="container" style="margin-top:40px;">
 		<div class="row">
+		<h1 class="intro">Futsal System</h1><br><br>
 			<div class="col-sm-6 col-md-4 col-md-offset-4">
-				<div class="panel panel-default">
+				<div class="panel panel-default" style="opacity: 0.85;">
 					<div class="panel-heading">
 						<strong> Admin Panel</strong>
 					</div>

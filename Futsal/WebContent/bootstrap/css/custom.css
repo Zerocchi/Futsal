@@ -1,0 +1,12 @@
+@CHARSET "UTF-8";
+
+.center {
+    margin: 0 auto;
+    width: 80%;
+}
+
+.intro {
+	text-align: center;
+	color: blue; 
+	font-family: 'Josefin Slab', serif;
+}
