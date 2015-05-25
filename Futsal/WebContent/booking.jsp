@@ -26,7 +26,7 @@
 	<table border="1" align="center" class="table table-bordered table-hover">
 	<tr><td colspan=2 align="center"><h1>Booking</h1></td></tr>
 	<tr><td>Booking Name:</td><td><input type="text" name="name" value="${bookinfo.bookName}"></td></tr>
-	<tr><td>Booking Time:<br /><a href="Booking?action=check" onclick="window.open('Booking?action=check', 'newwindow', 'width=350, height=600'); return false;">Check Availability</a></td>
+	<tr><td>Booking Time:</td>
 	<td align="center">
 	
 	<%-- start time --%>
