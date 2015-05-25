@@ -10,7 +10,7 @@
 <link href="bootstrap/css/custom.css" rel="stylesheet">
 <title>Log In</title>
 </head>
-<body style="background-image: url(bootstrap/futsal.jpg); background-size: cover">
+<body style="background-image: url(bootstrap/futsal.jpg); background-size: cover; opacity: 0.85;">
 <c:choose>  
 <c:when test="${sessionScope.user eq 'admin'}"> <%-- check if user session is equal to admin --%>
 <c:redirect url="/admin.jsp" />
@@ -18,9 +18,9 @@
 <c:otherwise>
       <div class="container" style="margin-top:40px;">
 		<div class="row">
-		<h1 class="intro">Futsal System</h1><br><br>
+		<br><br><br><br>
 			<div class="col-sm-6 col-md-4 col-md-offset-4">
-				<div class="panel panel-default" style="opacity: 0.85;">
+				<div class="panel panel-default">
 					<div class="panel-heading">
 						<strong> Admin Panel</strong>
 					</div>

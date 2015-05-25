@@ -10,3 +10,9 @@
 	color: blue; 
 	font-family: 'Josefin Slab', serif;
 }
+
+.mainbg {
+	background-image: url(bootstrap/futsal.jpg); 
+	background-size: cover; 
+	opacity: 0.85;	
+}
