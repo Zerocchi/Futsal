@@ -14,6 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.futsal.dao.BookingDao;
+import com.futsal.dao.CourtDao;
+import com.futsal.helper.CourtAvailability;
 import com.futsal.bean.Booking;
 
 /**
@@ -23,14 +25,18 @@ import com.futsal.bean.Booking;
 public class BookingHandler extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private BookingDao bookingDAO;
+	private CourtDao courtDAO;
+	private CourtAvailability availability;
 	private SimpleDateFormat formatter;
-	private static String INSERT_OR_EDIT = "/booking.jsp";
+	private static String INSERT_OR_EDIT = "/bookpanel.jsp";
     private static String LIST = "/listBooking.jsp";
     private static String AVAILABILITY = "/checkavailability.jsp";
 	
     public BookingHandler() {
         super();
         bookingDAO = new BookingDao();
+        courtDAO = new CourtDao();
+        availability = new CourtAvailability();
         formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm");
     }
 
@@ -51,24 +57,25 @@ public class BookingHandler extends HttpServlet {
 		if(action.equalsIgnoreCase("list")) { // booking list
 			forward = LIST; // this will act as a view page for booking list
 			request.setAttribute("bookinglist", bookingDAO.getAllBooking());
-			request.setAttribute("courtlist", bookingDAO.getCourtList());
+			request.setAttribute("courtlist", courtDAO.getCourtList());
 			request.setAttribute("currentdate", formatter.format(new Date()));
 		} else if(action.equalsIgnoreCase("add")) { // add booking
 			forward = INSERT_OR_EDIT;
-			request.setAttribute("courtlist", bookingDAO.getCourtList());
+			request.setAttribute("courtlist", courtDAO.getCourtList());
 		} else if(action.equalsIgnoreCase("delete")) { // delete booking
 			int bookingid = Integer.parseInt(request.getParameter("bookingid"));
 			bookingDAO.deleteBookingById(bookingid);
 			forward = LIST;
 			request.setAttribute("bookinglist", bookingDAO.getAllBooking());
+			request.setAttribute("courtlist", courtDAO.getCourtList());
 		} else if(action.equalsIgnoreCase("update")){ // update booking
 			forward = INSERT_OR_EDIT;
 			int bookingid = Integer.parseInt(request.getParameter("bookingid"));
-			request.setAttribute("courtlist", bookingDAO.getCourtList());
+			request.setAttribute("courtlist", courtDAO.getCourtList());
 			request.setAttribute("bookinfo", bookingDAO.getBookingById(bookingid));
 		} else if(action.equalsIgnoreCase("check")){
 			forward = LIST;
-			request.setAttribute("courtlist", bookingDAO.getCourtList());
+			request.setAttribute("courtlist", courtDAO.getCourtList());
 			request.setAttribute("bookinglist", bookingDAO.getAllBooking());
 			request.setAttribute("currentdate", formatter.format(new Date()));
 			
@@ -80,7 +87,7 @@ public class BookingHandler extends HttpServlet {
 			try {
 				datetime = formatter.parse(request.getParameter("datetime"));
 				court = Integer.parseInt(request.getParameter("court"));
-				boolean isAvailable = bookingDAO.checkCourtAvailability(datetime, court);
+				boolean isAvailable = availability.courtAvailable(court, datetime);
 				request.setAttribute("status", isAvailable);
 				request.setAttribute("datetime", datetime);
 				request.setAttribute("court", court);
@@ -117,7 +124,7 @@ public class BookingHandler extends HttpServlet {
 		}
 		
 		// redirect to list page.
-		response.sendRedirect(request.getContextPath() + "/admin.jsp");
+		response.sendRedirect(request.getContextPath() + "/booking.jsp");
 	}
 
 }

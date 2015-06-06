@@ -28,7 +28,7 @@ public class LoginHandler extends HttpServlet {
         	HttpSession session = request.getSession(false);
             if(session!=null)
             	session.setAttribute("user", n); // set session attribute of user name
-    		response.sendRedirect("admin.jsp");
+    		response.sendRedirect("dashboard.jsp");
         } else {  
         	response.sendRedirect("loginerror.jsp"); 
         }  

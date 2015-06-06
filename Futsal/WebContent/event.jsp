@@ -11,7 +11,7 @@
 <body>
 <c:choose>  
 <c:when test="${sessionScope.user != null}"> <%-- check if user session is available --%>
-<jsp:forward page="/Booking?action=list" /> <%-- get list action from the Booking servlet --%>
+<jsp:forward page="/Event?action=list" /> <%-- get list action from the Booking servlet --%>
 </c:when>  
 <c:otherwise>
 <jsp:forward page="login.jsp" />

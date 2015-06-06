@@ -6,15 +6,15 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Futsal System</title>
+<title>Dashboard</title>
 </head>
 <body>
 <c:choose>  
-<c:when test="${sessionScope.user eq 'admin'}"> <%-- check if user session is equal to admin --%>
-<c:redirect url="/dashboard.jsp" />
+<c:when test="${sessionScope.user != null}"> <%-- check if user session is available --%>
+<jsp:forward page="/Main?action=list" /> <%-- get list action from the Main servlet --%>
 </c:when>  
 <c:otherwise>
-<c:redirect url="/login.jsp" />
+<jsp:forward page="login.jsp" />
 </c:otherwise>
 </c:choose>
 </body>

@@ -1,5 +1,6 @@
 package com.futsal.dao;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,8 +16,12 @@ import com.futsal.bean.Court;
 import com.futsal.connection.ConnectionProvider;
 import com.futsal.helper.CheckInterval;
 
-public class BookingDao {
+public class BookingDao implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private static int STATUS=0;
 	private Connection con;
 	SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
@@ -50,6 +55,37 @@ public class BookingDao {
 		return books;
 	}
 	
+	// Get all the bookings plus court from the database
+	public List<Booking> getAllBookingFromDate(Date date) {
+			
+			if(con == null)
+				con = ConnectionProvider.getCon();
+			List<Booking> books = new ArrayList<>();
+			try {
+				PreparedStatement ps = con.prepareStatement("select b.booking_id as booking_id, b.booking_name as booking_name, "
+						+ "to_char(b.booking_start, 'DD/MM/YYYY HH24:MI') as booking_start, to_char(b.booking_end, 'DD/MM/YYYY HH24:MI') "
+						+ "as booking_end, c.court_num as court from booking b, courtbooking cb, court c where b.booking_id = cb.booking_id "
+						+ "and cb.court_id = c.court_id and b.booking_start >= ? order by booking_id");
+				ps.setTimestamp(1, new java.sql.Timestamp(date.getTime()));
+				
+				ResultSet rs = ps.executeQuery();
+				
+				while(rs.next()){
+					Booking booking = new Booking();
+					booking.setBookId(rs.getInt("booking_id"));
+					booking.setBookName(rs.getString("booking_name"));
+					booking.setBookStart(sdf.parse(rs.getString("booking_start")));
+					booking.setBookEnd(sdf.parse(rs.getString("booking_end")));
+					booking.setBookCourtId(rs.getInt("court"));
+					books.add(booking);
+				}
+				
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+			return books;
+		}
+	
 	// get booking details by ID
 	public Booking getBookingById(int id) {
 		
@@ -79,6 +115,7 @@ public class BookingDao {
 		return booking;
 	}
 
+	// create new booking
 	public void newBooking(Booking b) {
 		
 		try {
@@ -178,59 +215,6 @@ public class BookingDao {
 			e.printStackTrace();
 		}
 		
-	}
-
-	public List<Court> getCourtList() {
-		
-		if(con == null)
-			con = ConnectionProvider.getCon();
-		List<Court> courts = new ArrayList<>();
-		try {
-			Statement statement = con.createStatement();
-			ResultSet rs = statement.executeQuery("select distinct * from court");
-			
-			while(rs.next()){
-				Court court = new Court();
-				court.setCourtId(rs.getInt("court_id"));
-				court.setCourtNum(rs.getInt("court_num"));
-				courts.add(court);
-			}
-			
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-		return courts;
-		
-	}
-	
-	public boolean checkCourtAvailability(Date dateCheck, int courtId){
-		
-		// return boolean value if the selected court is available
-		
-		boolean isAvailable = true;
-		
-		if(con == null)
-			con = ConnectionProvider.getCon();
-		try {
-			PreparedStatement ps = con.prepareStatement("select to_char(b.booking_start, 'DD/MM/YYYY HH24:MI') as"
-					+ " booking_start, to_char(b.booking_end, 'DD/MM/YYYY HH24:MI') as booking_end, "
-					+ "co.court_num as court from booking b, courtbooking cb, court co where b.booking_id = cb.booking_id "
-					+ "and cb.court_id = co.court_id and co.court_id = ?");
-			ps.setInt(1, courtId);
-			
-			ResultSet rs = ps.executeQuery();
-			
-			while(rs.next() && isAvailable){
-				Date start = sdf.parse(rs.getString("booking_start"));
-				Date end = sdf.parse(rs.getString("booking_end"));
-				if(CheckInterval.check(start, end, dateCheck)){
-					isAvailable = false;
-				}
-			}
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-		return isAvailable;
 	}
 
 }

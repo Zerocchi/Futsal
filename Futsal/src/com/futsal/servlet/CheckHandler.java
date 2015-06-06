@@ -14,7 +14,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.futsal.dao.BookingDao;
+import com.futsal.dao.CourtDao;
 import com.futsal.helper.CheckInterval;
+import com.futsal.helper.CourtAvailability;
 
 /**
  * Servlet implementation class CheckServlet
@@ -22,9 +24,8 @@ import com.futsal.helper.CheckInterval;
 @WebServlet("/Check")
 public class CheckHandler extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private static String RESULT = "availablenotice.jsp";
 	private static String LIST = "listBooking.jsp";
-	private BookingDao bookingDAO;
+	private CourtAvailability availability;
 	private SimpleDateFormat formatter;
        
     /**
@@ -32,7 +33,8 @@ public class CheckHandler extends HttpServlet {
      */
     public CheckHandler() {
         super();
-        bookingDAO = new BookingDao();
+        new BookingDao();
+        availability = new CourtAvailability();
     }
 
 	/**
@@ -54,7 +56,7 @@ public class CheckHandler extends HttpServlet {
 		try {
 			datetime = formatter.parse(request.getParameter("datetime"));
 			court = Integer.parseInt(request.getParameter("court"));
-			boolean isAvailable = bookingDAO.checkCourtAvailability(datetime, court);
+			boolean isAvailable = availability.courtAvailable(court, datetime);
 			request.setAttribute("status", isAvailable);
 			request.setAttribute("datetime", datetime);
 			request.setAttribute("court", court);

@@ -25,7 +25,9 @@
         </div>
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
-                <li><a href="admin.jsp">Home</a>
+                <li><a href="dashboard.jsp">Main</a>
+                <li><a href="booking.jsp">Booking</a>
+                <li><a href="event.jsp">Event</a>
                 <!-- <li><a href="Booking?action=check">Check Availability</a></li> -->
 
             </ul>
