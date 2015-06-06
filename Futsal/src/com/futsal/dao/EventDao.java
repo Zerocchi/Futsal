@@ -56,10 +56,10 @@ public class EventDao {
 			con = ConnectionProvider.getCon();
 		List<Event> events = new ArrayList<>();
 		try {
-			PreparedStatement ps = con.prepareStatement("select e.event_id as event_id, e.event_name as event_name, "
+			PreparedStatement ps = con.prepareStatement("select distinct e.event_id as event_id, e.event_name as event_name, "
 					+ "to_char(e.event_start, 'DD/MM/YYYY HH24:MI') as event_start, to_char(e.event_end, 'DD/MM/YYYY HH24:MI') "
-					+ "as event_end, c.court_num as court from event e, eventbooking eb, court c where e.event_id = eb.event_id "
-					+ "and eb.court_id = c.court_id and e.event_start >= ? order by event_id");
+					+ "as event_end from event e, eventbooking eb, court c where e.event_id = eb.event_id "
+					+ "and eb.court_id = c.court_id and e.event_start >= ? order by event_start");
 			ps.setTimestamp(1, new java.sql.Timestamp(date.getTime()));
 			
 			ResultSet rs = ps.executeQuery();
@@ -70,7 +70,6 @@ public class EventDao {
 				event.setEventName(rs.getString("event_name"));
 				event.setEventStart(sdf.parse(rs.getString("event_start")));
 				event.setEventEnd(sdf.parse(rs.getString("event_end")));
-				event.setEventCourtId(rs.getInt("court"));
 				events.add(event);
 			}
 			
@@ -207,35 +206,5 @@ public class EventDao {
 			e.printStackTrace();
 		}
 		
-	}
-	
-	public boolean checkCourtAvailability(Date dateCheck, int courtId){
-		
-		// return boolean value if the selected court is available
-		
-		boolean isAvailable = true;
-		
-		if(con == null)
-			con = ConnectionProvider.getCon();
-		try {
-			PreparedStatement ps = con.prepareStatement("select to_char(e.event_start, 'DD/MM/YYYY HH24:MI') as"
-					+ " event_start, to_char(e.event_end, 'DD/MM/YYYY HH24:MI') as event_end, "
-					+ "co.court_num as court from event e, eventbooking eb, court co where e.event_id = eb.event_id "
-					+ "and eb.court_id = co.court_id and co.court_id = ?");
-			ps.setInt(1, courtId);
-			
-			ResultSet rs = ps.executeQuery();
-			
-			while(rs.next() && isAvailable){
-				Date start = sdf.parse(rs.getString("event_start"));
-				Date end = sdf.parse(rs.getString("event_end"));
-				if(CheckInterval.check(start, end, dateCheck)){
-					isAvailable = false;
-				}
-			}
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-		return isAvailable;
 	}
 }

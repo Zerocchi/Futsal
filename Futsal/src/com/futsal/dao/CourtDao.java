@@ -107,7 +107,7 @@ public class CourtDao implements Serializable {
 		return isAvailable;
 	}
 	
-	public List<Booking> listBookingOnSelectedPeriod(Date startDate, Date endDate){
+	public List<Booking> listBookingOnSelectedDate(Date date){
 		
 		if(con == null)
 			con = ConnectionProvider.getCon();
@@ -117,10 +117,9 @@ public class CourtDao implements Serializable {
 					+ "b.booking_name as booking_name, to_char(b.booking_start, 'DD/MM/YYYY HH24:MI') "
 					+ "as booking_start, to_char(b.booking_end, 'DD/MM/YYYY HH24:MI') as booking_end, "
 					+ "c.court_num as court from booking b, courtbooking cb, court c where "
-					+ "b.booking_id = cb.booking_id and cb.court_id = c.court_id and b.booking_start "
-					+ "between ? and ? order by booking_id");
-			ps.setTimestamp(1, new java.sql.Timestamp(startDate.getTime()));
-			ps.setTimestamp(2, new java.sql.Timestamp(endDate.getTime()));
+					+ "b.booking_id = cb.booking_id and cb.court_id = c.court_id and ? "
+					+ "between b.booking_start and b.booking_end order by booking_id");
+			ps.setTimestamp(1, new java.sql.Timestamp(date.getTime()));
 			
 			ResultSet rs = ps.executeQuery();
 			
@@ -141,29 +140,28 @@ public class CourtDao implements Serializable {
 		
 	}
 	
-	public List<Event> listEventOnSelectedPeriod(Date startDate, Date endDate){
+	public List<Event> listEventOnSelectedDate(Date date){
 		
 		if(con == null)
 			con = ConnectionProvider.getCon();
 		List<Event> events = new ArrayList<>();
 		try {
-			PreparedStatement ps = con.prepareStatement("select e.event_id as event_id, "
+			PreparedStatement ps = con.prepareStatement("select distinct e.event_id as event_id, "
 					+ "e.event_name as event_name, to_char(e.event_start, 'DD/MM/YYYY HH24:MI') "
-					+ "as event_start, to_char(e.event_end, 'DD/MM/YYYY HH24:MI') as event_end, "
+					+ "as event_start, to_char(e.event_end, 'DD/MM/YYYY HH24:MI') as event_end "
 					+ "from event e, eventbooking eb, court c where "
-					+ "e.event_id = eb.event_id and eb.court_id = c.court_id and e.event_start "
-					+ "between ? and ? order by event_id");
-			ps.setTimestamp(1, new java.sql.Timestamp(startDate.getTime()));
-			ps.setTimestamp(2, new java.sql.Timestamp(endDate.getTime()));
+					+ "e.event_id = eb.event_id and eb.court_id = c.court_id and ? "
+					+ "between e.event_start and e.event_end order by event_id");
+			ps.setTimestamp(1, new java.sql.Timestamp(date.getTime()));
 			
 			ResultSet rs = ps.executeQuery();
 			
 			while(rs.next()){
 				Event event = new Event();
-				event.setEventId(rs.getInt("booking_id"));
-				event.setEventName(rs.getString("booking_name"));
-				event.setEventStart(sdf.parse(rs.getString("booking_start")));
-				event.setEventEnd(sdf.parse(rs.getString("booking_end")));
+				event.setEventId(rs.getInt("event_id"));
+				event.setEventName(rs.getString("event_name"));
+				event.setEventStart(sdf.parse(rs.getString("event_start")));
+				event.setEventEnd(sdf.parse(rs.getString("event_end")));
 				events.add(event);
 			}
 			

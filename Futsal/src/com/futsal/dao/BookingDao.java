@@ -65,7 +65,7 @@ public class BookingDao implements Serializable {
 				PreparedStatement ps = con.prepareStatement("select b.booking_id as booking_id, b.booking_name as booking_name, "
 						+ "to_char(b.booking_start, 'DD/MM/YYYY HH24:MI') as booking_start, to_char(b.booking_end, 'DD/MM/YYYY HH24:MI') "
 						+ "as booking_end, c.court_num as court from booking b, courtbooking cb, court c where b.booking_id = cb.booking_id "
-						+ "and cb.court_id = c.court_id and b.booking_start >= ? order by booking_id");
+						+ "and cb.court_id = c.court_id and b.booking_start >= ? order by booking_start");
 				ps.setTimestamp(1, new java.sql.Timestamp(date.getTime()));
 				
 				ResultSet rs = ps.executeQuery();

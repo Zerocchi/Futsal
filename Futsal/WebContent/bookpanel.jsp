@@ -72,7 +72,11 @@
 	</select>
 	</td>
 	</tr>
-	<tr><td colspan="2" align="center"><input type="submit" value="Submit" class="btn btn-primary"></td></tr>
+	<tr>
+		<td colspan="2" align="center">
+		<a href="booking.jsp"><input type="button" value="Cancel" class="btn btn-danger"></a>
+		<input type="submit" value="Submit" class="btn btn-primary"></td>
+	</tr>
 	</table>
 </form>
 </div>

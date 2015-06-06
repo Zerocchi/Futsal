@@ -68,6 +68,7 @@ public class BookingHandler extends HttpServlet {
 			forward = LIST;
 			request.setAttribute("bookinglist", bookingDAO.getAllBooking());
 			request.setAttribute("courtlist", courtDAO.getCourtList());
+			request.setAttribute("currentdate", formatter.format(new Date()));
 		} else if(action.equalsIgnoreCase("update")){ // update booking
 			forward = INSERT_OR_EDIT;
 			int bookingid = Integer.parseInt(request.getParameter("bookingid"));
