@@ -13,8 +13,13 @@ public class CourtAvailability {
     	boolean eventAvailable = false;
     	
 		Date datetime = new Date();
-		bookingAvailable = courtDAO.checkCourtAvailabilityBooking(datetime, court);
-		eventAvailable = courtDAO.checkCourtAvailabilityEvent(datetime);
+		
+		if(courtDAO.listBookingOnDate(datetime, court).isEmpty()){
+			bookingAvailable = true;
+		} if(courtDAO.listEventOnDate(datetime).isEmpty()){
+			eventAvailable = true;
+		}
+
 		return bookingAvailable && eventAvailable;
 	}
 	
@@ -22,9 +27,23 @@ public class CourtAvailability {
     	boolean bookingAvailable = false;
     	boolean eventAvailable = false;
     	
-		bookingAvailable = courtDAO.checkCourtAvailabilityBooking(datetime, court);
-		eventAvailable = courtDAO.checkCourtAvailabilityEvent(datetime);
+    	if(courtDAO.listBookingOnDate(datetime, court).isEmpty()){
+			bookingAvailable = true;
+		} if(courtDAO.listEventOnDate(datetime).isEmpty()){
+			eventAvailable = true;
+		}
 		return bookingAvailable && eventAvailable;
 	}
 	
+	public boolean courtAvailable(int court, Date start, Date end){
+		boolean bookingAvailable = false;
+    	boolean eventAvailable = false;
+    	
+    	if(courtDAO.listBookingOnDate(start, end, court).isEmpty()){
+			bookingAvailable = true;
+		} if(courtDAO.listEventOnDate(start, end).isEmpty()){
+			eventAvailable = true;
+		}
+		return bookingAvailable && eventAvailable;
+	}
 }

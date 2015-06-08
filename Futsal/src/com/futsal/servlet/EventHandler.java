@@ -32,7 +32,7 @@ public class EventHandler extends HttpServlet {
 	private SimpleDateFormat formatter;
 	private static String INSERT_OR_EDIT = "/eventpanel.jsp";
     private static String LIST = "/listEvent.jsp";
-    private static String AVAILABILITY = "/checkavailability.jsp";
+    private static String AVAILABILITY = "/available.jsp";
 	
     public EventHandler() {
         super();
@@ -93,6 +93,25 @@ public class EventHandler extends HttpServlet {
 				request.setAttribute("status", isAvailable);
 				request.setAttribute("datetime", datetime);
 				request.setAttribute("court", court);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		} else if(action.equalsIgnoreCase("checkboth")){
+			formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+			Date start = null;
+			Date end = null;
+			int court = 0;
+			
+			try {
+				forward = AVAILABILITY;
+				start = formatter.parse(request.getParameter("start"));
+				end = formatter.parse(request.getParameter("end"));
+				request.setAttribute("booking", courtDAO.listBookingOnDate(start, end));
+				request.setAttribute("event", courtDAO.listEventOnDate(start, end));
+				request.setAttribute("start", start);
+				request.setAttribute("end", end);
+				request.setAttribute("court", court);
+				
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}

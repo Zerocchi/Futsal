@@ -1,6 +1,7 @@
 package com.futsal.servlet;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -30,7 +31,7 @@ public class BookingHandler extends HttpServlet {
 	private SimpleDateFormat formatter;
 	private static String INSERT_OR_EDIT = "/bookpanel.jsp";
     private static String LIST = "/listBooking.jsp";
-    private static String AVAILABILITY = "/checkavailability.jsp";
+    private static String AVAILABILITY = "/available.jsp";
 	
     public BookingHandler() {
         super();
@@ -92,6 +93,28 @@ public class BookingHandler extends HttpServlet {
 				request.setAttribute("status", isAvailable);
 				request.setAttribute("datetime", datetime);
 				request.setAttribute("court", court);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		} else if(action.equalsIgnoreCase("checkboth")){
+			formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+			Date start = null;
+			Date end = null;
+			int court = 0;
+			
+			try {
+				forward = AVAILABILITY;
+				start = formatter.parse(request.getParameter("start"));
+				end = formatter.parse(request.getParameter("end"));
+				court = Integer.parseInt(request.getParameter("court"));
+				boolean isAvailable = availability.courtAvailable(court, start, end);
+				request.setAttribute("booking", courtDAO.listBookingOnDate(start, end, court));
+				request.setAttribute("event", courtDAO.listEventOnDate(start, end));
+				request.setAttribute("status", isAvailable);
+				request.setAttribute("start", start);
+				request.setAttribute("end", end);
+				request.setAttribute("court", court);
+				
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}

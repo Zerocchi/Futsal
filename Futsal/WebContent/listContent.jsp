@@ -18,30 +18,13 @@
 <jsp:include page="menubar.jsp" />
 <div class="container">
 	<div class="jumbotron"></div>
-	
 	<div class="row">
 		<div class="col-md-12">
 			
-			<c:choose>
-			<c:when test="${not empty currentbooking}">
-				<c:forEach var="currentbook" items="${currentbooking}">
-					<div class="alert alert-warning">
-		        	<a href="#" class="close" data-dismiss="alert">&times;</a>
-					<strong>Notice:</strong> ${currentbook.bookName} is live now at court
-					${currentbook.bookCourtId} until <fmt:formatDate value="${currentbook.bookEnd}" pattern="HH:mm" />
-		   			 </div>
-		   		</c:forEach>
-   			 </c:when>
-   			 <c:when test="${not empty currentevent}">
-				<c:forEach var="currentevent" items="${currentevent}">
-					<div class="alert alert-danger">
-		        	<a href="#" class="close" data-dismiss="alert">&times;</a>
-					<strong>Event:</strong> ${currentevent.eventName} is currently held now until 
-					<fmt:formatDate value="${currentevent.eventEnd}" pattern="dd/MM/yyyy HH:mm" />
-		   			 </div>
-		   		</c:forEach>
-   			 </c:when>
-   			</c:choose>
+			<div class="alert alert-warning">
+        		<a href="#" class="close" data-dismiss="alert">&times;</a>
+				<strong>Notice:</strong> Please read guide if you are confused.
+   			 </div>
    			
 		</div>
 	</div>	
@@ -49,27 +32,74 @@
 	<div class="row">
 		
 		<div class="col-md-9">
-			
-		<table border="1" align="center" class="table table-bordered table-hover" width=50%>
-		<tr><td colspan=6 align="center">
-			<h1>Welcome Admin!</h1>
-		</td></tr>
-		<tr><td align="center" colspan="3">What would you like to do?</td></tr>
-			<tr>
-			<td align="center"><a href="Booking?action=add"><button class="btn btn-primary">Add Booking</button></a></td>
-			<td align="center"><a href="Event?action=add"><button class="btn btn-primary">Add Event</button></a></td>
-			<td align="center">Check Availability</td>
-		</tr>
-		</table>
 		
+		<div class="panel panel-info">
+		<div class="panel-heading" align="center">Welcome!</div>
+		<div class="panel-body">
+		Welcome to the dashboard! To begin, <a href="Booking?action=add">book the court</a> or <a href="Event?action=add">
+		add an event.</a>
+		</div>
+		</div>
+		
+		<div class="row">
+		
+			<div class="col-md-6">
+			
+				<%-- Upcoming matches --%>
+				<div class="panel panel-success">
+				<div class="panel-heading" align="center">Upcoming Matches</div>
+				<table align="center" class="table table-bordered table-hover">
+				<tr>
+					<th style="text-align: center;">Name</th>
+					<th style="text-align: center;">Start</th>
+					<th style="text-align: center;">Court</th>
+				</tr>
+				<c:if test="${empty bookinglist}"><tr><td colspan="3" align="center">No upcoming matches.</td></tr></c:if>
+				<c:forEach var="book" items="${bookinglist}">
+				<tr>
+					<td align="center">${book.bookName}</td>
+					<td align="center"><fmt:formatDate value="${book.bookStart}" pattern="dd/MM/yyyy HH:mm" /></td>
+					<td align="center">${book.bookCourtId}</td>
+				</tr>
+				</c:forEach>
+				</table>
+				<div class="panel-footer" align="right"><a href="booking.jsp">View all bookings &#x203a;&#x203a;</a></div>
+				</div>
+			
+			</div>
+			
+			<div class="col-md-6">
+			
+				<%-- Upcoming events --%>
+				<div class="panel panel-success">
+				<div class="panel-heading" align="center">Upcoming Events</div>
+				<table align="center" class="table table-bordered table-hover">
+				<tr>
+					<th style="text-align: center;">Name</th>
+					<th style="text-align: center;">Start</th>
+				</tr>
+				<c:if test="${empty eventlist}"><tr><td colspan="2" align="center">No upcoming event.</td></tr></c:if>
+				<c:forEach var="event" items="${eventlist}">
+				<tr>
+					<td align="center">${event.eventName}</td>
+					<td align="center"><fmt:formatDate value="${event.eventStart}" pattern="dd/MM/yyyy HH:mm" /></td>
+				</tr>
+				</c:forEach>
+				</table>
+				<div class="panel-footer" align="right"><a href="event.jsp">View all events &#x203a;&#x203a;
+				</a></div>
+				</div>
+			</div>
+		
+		</div>
 		</div>
 		
 		<div class="col-md-3">
 		
 			<%-- Court status --%>
-			<div class="panel panel-default">
-			<table border="1" align="center" class="table table-bordered table-hover">
-			<tr><td colspan="2" align="center"><strong>Current Status</strong></td></tr>
+			<div class="panel panel-primary">
+			<div class="panel-heading" align="center">Current Status</div>
+			<table align="center" class="table">
 			<tr>
 				<th style="text-align: center;">Court</th>
 				<th style="text-align: center;">Status</th>
@@ -84,51 +114,37 @@
 			</tr>
 			</table>
 			</div>
-			
-			<%-- Upcoming matches --%>
-			<div class="panel panel-default">
-			<table border="1" align="center" class="table table-bordered table-hover">
-			<tr><td colspan="3" align="center"><strong>Upcoming Matches</strong></td></tr>
-			<tr>
-				<th style="text-align: center;">Name</th>
-				<th style="text-align: center;">Start</th>
-				<th style="text-align: center;">Court</th>
-			</tr>
-			<c:if test="${empty bookinglist}"><tr><td colspan="3" align="center">No upcoming matches.</td></tr></c:if>
-			<c:forEach var="book" items="${bookinglist}">
-			<tr>
-				<td align="center">${book.bookName}</td>
-				<td align="center"><fmt:formatDate value="${book.bookStart}" pattern="dd/MM HH:mm" /></td>
-				<td align="center">${book.bookCourtId}</td>
-			</tr>
+		
+			<%-- Now playing --%>
+			<div class="panel panel-primary">
+			<div class="panel-heading" align="center">Now Playing</div>
+			<table align="center" class="table">
+			<c:if test="${empty currentbooking && empty currentevent}"><tr><td align="center">No match or event.</td></tr></c:if>
+			<c:choose>
+			<c:when test="${not empty currentbooking}">
+			<c:forEach var="currentbook" items="${currentbooking}">
+				<tr><td>Type</td><td>Match</td></tr>
+				<tr><td>Name</td><td>${currentbook.bookName}</td></tr>
+				<tr><td>Court</td><td>${currentbook.bookCourtId}</td>
+				<tr><td>Start</td><td><fmt:formatDate value="${currentbook.bookStart}" pattern="dd/MM/yyyy HH:mm" /></td>
+				<tr><td>End</td><td><fmt:formatDate value="${currentbook.bookEnd}" pattern="dd/MM/yyyy HH:mm" /></td>
+				<tr><td colspan="2" class="divider" align="right"><a href="Booking?action=update&bookingid=${currentbook.bookId}">Edit this match &#x203a;&#x203a;</a></td></tr>
 			</c:forEach>
-			<tr><td align="right" colspan="3"><a href="booking.jsp">View all bookings >>></a></td></tr>
-			<tr>
-			</table>
-			</div>
-			
-			<%-- Upcoming events --%>
-			<div class="panel panel-default">
-			<table border="1" align="center" class="table table-bordered table-hover">
-			<tr><td colspan="2" align="center"><strong>Upcoming Events</strong></td></tr>
-			<tr>
-				<th style="text-align: center;">Name</th>
-				<th style="text-align: center;">Start</th>
-			</tr>
-			<c:if test="${empty eventlist}"><tr><td colspan="2" align="center">No upcoming event.</td></tr></c:if>
-			<c:forEach var="event" items="${eventlist}">
-			<tr>
-				<td align="center">${event.eventName}</td>
-				<td align="center"><fmt:formatDate value="${event.eventStart}" pattern="dd/MM HH:mm" /></td>
-			</tr>
+			</c:when>
+			<c:when test="${not empty currentevent}">
+			<c:forEach var="currentevent" items="${currentevent}">
+				<tr><td>Type</td><td>Event</td></tr>
+				<tr><td>Name</td><td>${currentevent.eventName}</td></tr>
+				<tr><td>Court</td><td>All courts</td>
+				<tr><td>Start</td><td><fmt:formatDate value="${currentevent.eventStart}" pattern="dd/MM/yyyy HH:mm" /></td>
+				<tr><td>End</td><td><fmt:formatDate value="${currentevent.eventEnd}" pattern="dd/MM/yyyy HH:mm" /></td>
 			</c:forEach>
-			<tr><td align="right" colspan="2"><a href="event.jsp">View all events >>></a></td></tr>
-			<tr>
+			</c:when>
+			</c:choose>
 			</table>
 			</div>
 			
 		</div>
-		
 	</div>
 </div>
 </body>

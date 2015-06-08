@@ -58,8 +58,8 @@ public class MainHandler extends HttpServlet {
 		if(action.equalsIgnoreCase("list")) { // booking list
 			forward = LIST; // this will act as a view page for booking list
 			Date datetime = new Date();
-			request.setAttribute("currentbooking", courtDAO.listBookingOnSelectedDate(datetime));
-			request.setAttribute("currentevent", courtDAO.listEventOnSelectedDate(datetime));
+			request.setAttribute("currentbooking", courtDAO.listBookingOnDate(datetime));
+			request.setAttribute("currentevent", courtDAO.listEventOnDate(datetime));
 			request.setAttribute("bookinglist", bookingDAO.getAllBookingFromDate(datetime));
 			request.setAttribute("eventlist", eventDAO.getAllEventFromDate(datetime));
 			request.setAttribute("courtlist", courtDAO.getCourtList());
