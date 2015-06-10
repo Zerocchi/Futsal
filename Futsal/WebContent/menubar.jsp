@@ -42,7 +42,7 @@
 
 </c:when>  
 <c:otherwise>
-Please login to access admin panel.
+Please <a href="login.jsp">login</a> to access admin panel.
 </c:otherwise>
 </c:choose>
 

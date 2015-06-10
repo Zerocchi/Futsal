@@ -8,8 +8,12 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.futsal.bean.Booking;
 import com.futsal.bean.Court;
@@ -234,6 +238,10 @@ public class CourtDao implements Serializable {
 				booking.setBookEnd(sdf.parse(rs2.getString("booking_end")));
 				booking.setBookCourtId(rs2.getInt("court"));
 				books.add(booking);
+				for(int i=0; i<books.size(); i++){
+					if(books.get(i).getBookId() == booking.getBookId())
+						books.remove(booking);
+				}
 			}
 			
 		} catch(Exception e) {
@@ -249,6 +257,8 @@ public class CourtDao implements Serializable {
 			con = ConnectionProvider.getCon();
 		List<Booking> books = new ArrayList<>();
 		try {
+			
+			// get in between period
 			PreparedStatement ps = con.prepareStatement("select b.booking_id as booking_id, b.booking_name "
 					+ "as booking_name, to_char(b.booking_start, 'DD/MM/YYYY HH24:MI') as booking_start, "
 					+ "to_char(b.booking_end, 'DD/MM/YYYY HH24:MI') as booking_end, c.court_num as court "
@@ -271,7 +281,14 @@ public class CourtDao implements Serializable {
 				books.add(booking);
 			}
 			
-			PreparedStatement ps2 = con.prepareStatement("select b.booking_id as booking_id, b.booking_name as booking_name, to_char(b.booking_start, 'DD/MM/YYYY HH24:MI') as booking_start, to_char(b.booking_end, 'DD/MM/YYYY HH24:MI') as booking_end, c.court_num as court from booking b, courtbooking cb, court c where b.booking_id = cb.booking_id and cb.court_id = c.court_id and (b.booking_start between ? and ? or (b.booking_end between ? and ?)) and c.court_num = ?");
+			// get outside period
+			PreparedStatement ps2 = con.prepareStatement("select b.booking_id as booking_id, "
+					+ "b.booking_name as booking_name, to_char(b.booking_start, 'DD/MM/YYYY HH24:MI') "
+					+ "as booking_start, to_char(b.booking_end, 'DD/MM/YYYY HH24:MI') as booking_end, "
+					+ "c.court_num as court from booking b, courtbooking cb, court c where "
+					+ "b.booking_id = cb.booking_id and cb.court_id = c.court_id and "
+					+ "(b.booking_start between ? and ? or (b.booking_end between ? and ?)) "
+					+ "and c.court_num = ?");
 			ps2.setTimestamp(1, new java.sql.Timestamp(startDate.getTime()));
 			ps2.setTimestamp(2, new java.sql.Timestamp(endDate.getTime()));
 			ps2.setTimestamp(3, new java.sql.Timestamp(startDate.getTime()));
@@ -287,12 +304,17 @@ public class CourtDao implements Serializable {
 				booking.setBookStart(sdf.parse(rs2.getString("booking_start")));
 				booking.setBookEnd(sdf.parse(rs2.getString("booking_end")));
 				booking.setBookCourtId(rs2.getInt("court"));
-				books.add(booking);
+				for(int i=0; i<books.size(); i++){
+					if(books.get(i).getBookId() != booking.getBookId())
+						books.add(booking);
+				}
+
 			}
 			
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
+	
 		return books;
 		
 	}
@@ -381,6 +403,32 @@ public class CourtDao implements Serializable {
 			e.printStackTrace();
 		}
 		return events;
+		
+	}
+	
+	public int getCourtNumber(int courtid){
+		
+		int courtNum = 0;
+		
+		if(con == null)
+			con = ConnectionProvider.getCon();
+		
+		try {
+			PreparedStatement ps = con.prepareStatement("select court_num from court where court_id = ?");
+			ps.setInt(1, courtid);
+			
+			ResultSet rs = ps.executeQuery();
+			
+			if(rs.next()){
+				courtNum = rs.getInt("court_num");
+			}
+			
+			
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		return courtNum;
 		
 	}
 	

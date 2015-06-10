@@ -26,7 +26,7 @@
 <c:forEach var="book" items="${booking}">
 <div class="alert alert-warning">
 	<a href="#" class="close" data-dismiss="alert">&times;</a>
-There is a match at court ${court} from <fmt:formatDate value="${book.bookStart}" pattern="dd/MM/yyyy HH:mm" /> 
+There is a match at court ${book.bookCourtId} from <fmt:formatDate value="${book.bookStart}" pattern="dd/MM/yyyy HH:mm" /> 
 until <fmt:formatDate value="${book.bookEnd}" pattern="dd/MM/yyyy HH:mm" /> 
 </div>
 </c:forEach>
