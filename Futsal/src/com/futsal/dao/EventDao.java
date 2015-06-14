@@ -30,7 +30,7 @@ public class EventDao {
 		List<Event> events = new ArrayList<>();
 		try {
 			Statement statement = con.createStatement();
-			ResultSet rs = statement.executeQuery("select distinct eb.event_id as event_id, e.event_name as event_name, e.event_type, "
+			ResultSet rs = statement.executeQuery("select distinct eb.event_id as event_id, e.event_name as event_name, "
 					+ "to_char(e.event_start, 'DD/MM/YYYY HH24:MI') as event_start, to_char(e.event_end, 'DD/MM/YYYY HH24:MI') "
 					+ "as event_end from event e, eventbooking eb where e.event_id = eb.event_id order by event_id");
 			
@@ -38,7 +38,6 @@ public class EventDao {
 				Event event = new Event();
 				event.setEventId(rs.getInt("event_id"));
 				event.setEventName(rs.getString("event_name"));
-				event.setEventType(rs.getString("event_type"));
 				event.setEventStart(sdf.parse(rs.getString("event_start")));
 				event.setEventEnd(sdf.parse(rs.getString("event_end")));
 				events.add(event);
@@ -86,7 +85,7 @@ public class EventDao {
 			con = ConnectionProvider.getCon();
 		Event event = new Event();
 		try {
-			PreparedStatement ps = con.prepareStatement("select e.event_id as event_id, e.event_name as event_name, event_type, "
+			PreparedStatement ps = con.prepareStatement("select e.event_id as event_id, e.event_name as event_name, "
 					+ "to_char(e.event_start, 'DD/MM/YYYY HH24:MI') as event_start, "
 					+ "to_char(e.event_end, 'DD/MM/YYYY HH24:MI') as event_end, c.court_num as court from event e, "
 					+ "eventbooking eb, court c where e.event_id = eb.event_id and eb.court_id = c.court_id and "
@@ -98,7 +97,6 @@ public class EventDao {
 			if(rs.next()){
 				event.setEventId(rs.getInt("event_id"));
 				event.setEventName(rs.getString("event_name"));
-				event.setEventType(rs.getString("event_type"));
 				event.setEventStart(sdf.parse(rs.getString("event_start")));
 				event.setEventEnd(sdf.parse(rs.getString("event_end")));
 				event.setEventCourtId(rs.getInt("court"));
@@ -118,12 +116,11 @@ public class EventDao {
 				con = ConnectionProvider.getCon();
 			
 			// insert into event
-			PreparedStatement ps=con.prepareStatement("insert into event (event_id, event_name, event_type, event_start, event_end) "
-					+ "values (eventseq.nextval, ?, ?, ?, ?)");  
+			PreparedStatement ps=con.prepareStatement("insert into event (event_id, event_name, event_start, event_end) "
+					+ "values (eventseq.nextval, ?, ?, ?)");  
 			ps.setString(1, e.getEventName());
-			ps.setString(2, e.getEventType());
-			ps.setTimestamp(3, new java.sql.Timestamp(e.getEventStart().getTime()));
-			ps.setTimestamp(4, new java.sql.Timestamp(e.getEventEnd().getTime()));
+			ps.setTimestamp(2, new java.sql.Timestamp(e.getEventStart().getTime()));
+			ps.setTimestamp(3, new java.sql.Timestamp(e.getEventEnd().getTime()));
 			              
 			ps.executeUpdate();
 			
@@ -138,8 +135,8 @@ public class EventDao {
 			// insert into eventbooking using last sequence value for every court available
 			CourtDao courtDAO = new CourtDao();
 			for(Court court: courtDAO.getCourtList()){
-				PreparedStatement ps1=con.prepareStatement("insert into eventbooking (eventbooking_id, event_id, court_id) "
-						+ "values (eventbookseq.nextval, ?, ?)");  
+				PreparedStatement ps1=con.prepareStatement("insert into eventbooking (event_id, court_id) "
+						+ "values (?, ?)");  
 				ps1.setInt(1, lastSeqValue);
 				ps1.setInt(2, court.getCourtId());
 				              
@@ -159,12 +156,11 @@ public class EventDao {
 				con = ConnectionProvider.getCon();
 			
 			// Update event table
-			PreparedStatement ps=con.prepareStatement("update event set event_name=?, event_type=?, event_start=?, event_end=? where event_id = ?");
+			PreparedStatement ps=con.prepareStatement("update event set event_name=?, event_start=?, event_end=? where event_id = ?");
 			ps.setString(1,e.getEventName());
-			ps.setString(2, e.getEventType());
-			ps.setTimestamp(3, new java.sql.Timestamp(e.getEventStart().getTime()));
-			ps.setTimestamp(4, new java.sql.Timestamp(e.getEventEnd().getTime()));
-			ps.setInt(5, e.getEventId());
+			ps.setTimestamp(2, new java.sql.Timestamp(e.getEventStart().getTime()));
+			ps.setTimestamp(3, new java.sql.Timestamp(e.getEventEnd().getTime()));
+			ps.setInt(4, e.getEventId());
 
 			ps.executeUpdate();  
 			

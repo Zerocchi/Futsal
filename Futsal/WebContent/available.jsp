@@ -17,14 +17,14 @@
 </head>
 <body>
 <c:if test="${not empty status}">
-<div class="alert alert-warning">
+<div class="alert alert-danger">
 	<a href="#" class="close" data-dismiss="alert">&times;</a>
 		Court ${court} is <c:out value="${status? 'available' :'not available'}"/> at the selected date/time.
 </div>
 </c:if>
 <c:if test="${not empty booking}">
 <c:forEach var="book" items="${booking}">
-<div class="alert alert-warning">
+<div class="alert alert-danger">
 	<a href="#" class="close" data-dismiss="alert">&times;</a>
 There is a match at court ${book.bookCourtId} from <fmt:formatDate value="${book.bookStart}" pattern="dd/MM/yyyy HH:mm" /> 
 until <fmt:formatDate value="${book.bookEnd}" pattern="dd/MM/yyyy HH:mm" /> 
@@ -33,7 +33,7 @@ until <fmt:formatDate value="${book.bookEnd}" pattern="dd/MM/yyyy HH:mm" />
 </c:if>
 <c:if test="${not empty event}">
 <c:forEach var="event" items="${event}">
-<div class="alert alert-warning">
+<div class="alert alert-danger">
 	<a href="#" class="close" data-dismiss="alert">&times;</a>
 There is an event from <fmt:formatDate value="${event.eventStart}" pattern="dd/MM/yyyy HH:mm" /> 
 until <fmt:formatDate value="${event.eventEnd}" pattern="dd/MM/yyyy HH:mm" /> 

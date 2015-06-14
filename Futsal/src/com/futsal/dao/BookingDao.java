@@ -140,8 +140,8 @@ public class BookingDao implements Serializable {
 			}
 			
 			// insert into courtbooking using last sequence value
-			PreparedStatement ps1=con.prepareStatement("insert into courtbooking (courtbooking_id, booking_id, court_id) "
-					+ "values (courtbook_seq.nextval, ?, ?)");  
+			PreparedStatement ps1=con.prepareStatement("insert into courtbooking (booking_id, court_id) "
+					+ "values (?, ?)");  
 			ps1.setInt(1, lastSeqValue);
 			ps1.setInt(2, b.getBookCourtId());
 			              
