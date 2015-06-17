@@ -60,21 +60,25 @@ public class EventHandler extends HttpServlet {
 			forward = LIST; // this will act as a view page for booking list
 			request.setAttribute("eventlist", eventDAO.getAllEvent());
 			request.setAttribute("courtlist", courtDAO.getCourtList());
-			request.setAttribute("currentdate", formatter.format(new Date()));
+			request.setAttribute("currentdate", new Date());
 		} else if(action.equalsIgnoreCase("add")) { // add event
 			forward = INSERT_OR_EDIT;
 			request.setAttribute("courtlist", courtDAO.getCourtList());
+			request.setAttribute("currentdate", new Date());
 		} else if(action.equalsIgnoreCase("delete")) { // delete event
 			int eventid = Integer.parseInt(request.getParameter("eventid"));
+			request.setAttribute("currentdate", new Date());
 			eventDAO.deleteBookingById(eventid);
 			forward = LIST;
 			request.setAttribute("eventlist", eventDAO.getAllEvent());
 			request.setAttribute("courtlist", courtDAO.getCourtList());
+			request.setAttribute("currentdate", new Date());
 		} else if(action.equalsIgnoreCase("update")){ // update event
 			forward = INSERT_OR_EDIT;
 			int eventid = Integer.parseInt(request.getParameter("eventid"));
 			request.setAttribute("courtlist", courtDAO.getCourtList());
 			request.setAttribute("eventinfo", eventDAO.getEventById(eventid));
+			request.setAttribute("currentdate", new Date());
 		} else if(action.equalsIgnoreCase("check")){
 			forward = LIST;
 			request.setAttribute("courtlist", courtDAO.getCourtList());
@@ -111,6 +115,12 @@ public class EventHandler extends HttpServlet {
 				request.setAttribute("start", start);
 				request.setAttribute("end", end);
 				request.setAttribute("court", court);
+				
+				if(courtDAO.listBookingOnDate(start, end).size() > 0 || courtDAO.listEventOnDate(start, end).size() > 0){
+					request.setAttribute("estatus", false);
+				} else {
+					request.setAttribute("estatus", true);
+				}
 				
 			} catch (ParseException e) {
 				e.printStackTrace();

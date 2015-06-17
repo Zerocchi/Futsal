@@ -37,7 +37,7 @@
 		<div class="panel-heading" align="center">Welcome!</div>
 		<div class="panel-body">
 		Welcome to the dashboard! To begin, <a href="Booking?action=add">book the court</a> or <a href="Event?action=add">
-		add an event.</a>
+		add an event</a>.
 		</div>
 		</div>
 		

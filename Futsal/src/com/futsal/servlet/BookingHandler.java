@@ -59,22 +59,24 @@ public class BookingHandler extends HttpServlet {
 			forward = LIST; // this will act as a view page for booking list
 			request.setAttribute("bookinglist", bookingDAO.getAllBooking());
 			request.setAttribute("courtlist", courtDAO.getCourtList());
-			request.setAttribute("currentdate", formatter.format(new Date()));
+			request.setAttribute("currentdate", new Date());
 		} else if(action.equalsIgnoreCase("add")) { // add booking
 			forward = INSERT_OR_EDIT;
 			request.setAttribute("courtlist", courtDAO.getCourtList());
+			request.setAttribute("currentdate", new Date());
 		} else if(action.equalsIgnoreCase("delete")) { // delete booking
 			int bookingid = Integer.parseInt(request.getParameter("bookingid"));
 			bookingDAO.deleteBookingById(bookingid);
 			forward = LIST;
 			request.setAttribute("bookinglist", bookingDAO.getAllBooking());
 			request.setAttribute("courtlist", courtDAO.getCourtList());
-			request.setAttribute("currentdate", formatter.format(new Date()));
+			request.setAttribute("currentdate", new Date());
 		} else if(action.equalsIgnoreCase("update")){ // update booking
 			forward = INSERT_OR_EDIT;
 			int bookingid = Integer.parseInt(request.getParameter("bookingid"));
 			request.setAttribute("courtlist", courtDAO.getCourtList());
 			request.setAttribute("bookinfo", bookingDAO.getBookingById(bookingid));
+			request.setAttribute("currentdate", new Date());
 		} else if(action.equalsIgnoreCase("check")){
 			forward = LIST;
 			request.setAttribute("courtlist", courtDAO.getCourtList());

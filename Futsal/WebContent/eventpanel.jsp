@@ -6,7 +6,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Manage booking</title>
+<title>Manage event</title>
 <link rel="stylesheet" type="text/css" media="screen" href="bootstrap/css/bootstrap-datetimepicker.min.css">
 <script type="text/javascript" src="bootstrap/moment/moment.js"></script>
 <script type="text/javascript" src="bootstrap/js/jquery.min.js"></script> 
@@ -61,14 +61,14 @@
 	
 	<%-- start time --%>
 	<div class='input-group date' id='datetimepickerstart'>
-        <input type='text' class="form-control" name="start" id="start" placeholder="Start time" value="<fmt:formatDate value="${eventinfo.eventStart}" pattern="dd/MM/yyyy HH:mm" />" required/>
+        <input type='text' class="form-control" name="start" id="start" placeholder="Start time" value="<fmt:formatDate value="${currenttime}" pattern="dd/MM/yyyy HH:mm" />" required/>
         <span class="input-group-addon">
             <span class="glyphicon glyphicon-calendar"></span>
         </span>
     </div>
 	<%-- end time --%>
 	<div class='input-group date' id='datetimepickerend'>
-       <input type='text' class="form-control" name="end" id="end" placeholder="End time" value="<fmt:formatDate value="${eventinfo.eventEnd}" pattern="dd/MM/yyyy HH:mm" />" required/>
+       <input type='text' class="form-control" name="end" id="end" placeholder="End time" value="<fmt:formatDate value="${currenttime}" pattern="dd/MM/yyyy HH:mm" />" required/>
        <span class="input-group-addon">
            <span class="glyphicon glyphicon-calendar"></span>
        </span>
@@ -98,7 +98,7 @@
 	<tr><td colspan="2" align="center">
 	<a href="event.jsp"><input type="button" value="Cancel" class="btn btn-danger"></a>
 	<input type="button" onclick="checkAvailable()" value="Check" class="btn btn-success">
-	<input type="submit" value="Submit" class="btn btn-primary"></td></tr>
+	<input type="submit" onclick="return confirm('Are you sure you want to submit?')" value="Submit" class="btn btn-primary"></td></tr>
 	</table>
 </form>
 <div class="available" id="available" align="center"></div>

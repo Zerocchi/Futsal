@@ -108,7 +108,7 @@
 		<td colspan="2" align="center">
 		<a href="booking.jsp"><input type="button" value="Cancel" class="btn btn-danger"></a>
 		<input type="button" onclick="checkAvailable()" value="Check" class="btn btn-success">
-		<input type="submit" value="Submit" class="btn btn-primary"></td>
+		<input type="submit" onclick="return confirm('Are you sure you want to submit?')" value="Submit" class="btn btn-primary"></td>
 	</tr>
 	</table>
 </form>

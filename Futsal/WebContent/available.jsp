@@ -22,6 +22,12 @@
 		Court ${court} is <c:out value="${status? 'available' :'not available'}"/> at the selected date/time.
 </div>
 </c:if>
+<c:if test="${not empty estatus}">
+<div class="alert alert-danger">
+	<a href="#" class="close" data-dismiss="alert">&times;</a>
+		Court(s) are <c:out value="${estatus? 'available' :'not available'}"/> at the selected date/time.
+</div>
+</c:if>
 <c:if test="${not empty booking}">
 <c:forEach var="book" items="${booking}">
 <div class="alert alert-danger">

@@ -278,7 +278,10 @@ public class CourtDao implements Serializable {
 				booking.setBookStart(sdf.parse(rs.getString("booking_start")));
 				booking.setBookEnd(sdf.parse(rs.getString("booking_end")));
 				booking.setBookCourtId(rs.getInt("court"));
-				books.add(booking);
+				for(int i=0; i<books.size(); i++){
+					if(books.get(i).getBookId() != booking.getBookId())
+						books.add(booking);
+				}
 			}
 			
 			// get outside period
@@ -305,8 +308,8 @@ public class CourtDao implements Serializable {
 				booking.setBookEnd(sdf.parse(rs2.getString("booking_end")));
 				booking.setBookCourtId(rs2.getInt("court"));
 				for(int i=0; i<books.size(); i++){
-					if(books.get(i).getBookId() != booking.getBookId())
-						books.add(booking);
+					if(books.get(i).getBookId() == booking.getBookId())
+						books.remove(booking);
 				}
 
 			}
@@ -357,9 +360,9 @@ public class CourtDao implements Serializable {
 			con = ConnectionProvider.getCon();
 		List<Event> events = new ArrayList<>();
 		try {
-			PreparedStatement ps = con.prepareStatement("select e.event_id as event_id, e.event_name "
+			PreparedStatement ps = con.prepareStatement("select distinct e.event_id as event_id, e.event_name "
 					+ "as event_name, to_char(e.event_start, 'DD/MM/YYYY HH24:MI') as event_start, "
-					+ "to_char(e.event_end, 'DD/MM/YYYY HH24:MI') as event_end, c.court_num as court "
+					+ "to_char(e.event_end, 'DD/MM/YYYY HH24:MI') as event_end "
 					+ "from event e, eventbooking eb, court c where e.event_id = eb.event_id and "
 					+ "eb.court_id = c.court_id and (? between e.event_start and e.event_end or ? between "
 					+ "e.event_start and e.event_end)");
@@ -379,8 +382,8 @@ public class CourtDao implements Serializable {
 			
 			PreparedStatement ps2 = con.prepareStatement("select e.event_id as event_id, "
 					+ "e.event_name as event_name, to_char(e.event_start, 'DD/MM/YYYY HH24:MI') "
-					+ "as event_start, to_char(e.event_end, 'DD/MM/YYYY HH24:MI') as event_end, "
-					+ "c.court_num as court from event e, eventbooking eb, court c where e.event_id = "
+					+ "as event_start, to_char(e.event_end, 'DD/MM/YYYY HH24:MI') as event_end "
+					+ "from event e, eventbooking eb, court c where e.event_id = "
 					+ "eb.event_id and eb.court_id = c.court_id and (e.event_start between ? and ? or "
 					+ "(e.event_end between ? and ?))");
 			ps2.setTimestamp(1, new java.sql.Timestamp(startDate.getTime()));
@@ -396,7 +399,10 @@ public class CourtDao implements Serializable {
 				event.setEventName(rs2.getString("event_name"));
 				event.setEventStart(sdf.parse(rs2.getString("event_start")));
 				event.setEventEnd(sdf.parse(rs2.getString("event_end")));
-				events.add(event);
+				for(int i=0; i<events.size(); i++){
+					if(events.get(i).getEventId() != event.getEventId())
+						events.add(event);
+				}
 			}
 			
 		} catch(Exception e) {
